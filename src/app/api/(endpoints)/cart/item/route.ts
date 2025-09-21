@@ -1,0 +1,827 @@
+import { NextResponse } from "next/server";
+import { mockCarts } from "../../../utils/mockStorage";
+
+// Sepetteki belirli bir ürünü getir
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+    const groceryId = searchParams.get("groceryId");
+
+    if (!userId || !groceryId) {
+      return NextResponse.json(
+        { message: "Kullanıcı ID ve Ürün ID gerekli" },
+        { status: 400 }
+      );
+    }
+
+    // Kullanıcının sepetini bul
+    const cart = mockCarts[userId];
+
+    if (!cart) {
+      return NextResponse.json(
+        { message: "Sepet bulunamadı" },
+        { status: 404 }
+      );
+    }
+
+    // Ürünü sepette bul
+    const item = cart.items.find((item: any) => item.grocery._id === groceryId);
+
+    if (!item) {
+      return NextResponse.json(
+        { message: "Ürün sepette bulunamadı" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: "Ürün bulundu",
+      item: item,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ message: "Ürün getirilemedi" }, { status: 500 });
+  }
+}
+
+// Sepetteki belirli bir ürünü güncelle
+export async function PUT(req: Request) {
+  try {
+    const data = await req.json();
+    const { userId, groceryId, quantity } = data;
+
+    if (!userId || !groceryId) {
+      return NextResponse.json(
+        { message: "Kullanıcı ID ve Ürün ID gerekli" },
+        { status: 400 }
+      );
+    }
+
+    if (!quantity || quantity < 1) {
+      return NextResponse.json(
+        { message: "Geçerli bir miktar gerekli" },
+        { status: 400 }
+      );
+    }
+
+    // Kullanıcının sepetini bul
+    const cart = mockCarts[userId];
+
+    if (!cart) {
+      return NextResponse.json(
+        { message: "Sepet bulunamadı" },
+        { status: 404 }
+      );
+    }
+
+    // Ürünün sepette olup olmadığını kontrol et
+    const itemIndex = cart.items.findIndex(
+      (item: any) => item.grocery._id === groceryId
+    );
+
+    if (itemIndex === -1) {
+      // Ürün sepette yoksa, önce ürün bilgisini al ve sepete ekle
+      const mockGroceries = [
+        {
+          _id: "1",
+          name: "Elma",
+          category: "Meyveler",
+          price: 15.5,
+          unit: "kg",
+          stock: 100,
+          origin: "Amasya",
+          isOrganic: true,
+          description: "Taze ve lezzetli Amasya elması",
+          nutritionalValue: "C vitamini, lif",
+          expiryDays: 30,
+          photo: "/elma.jpg",
+          __v: 0,
+        },
+        {
+          _id: "2",
+          name: "Muz",
+          category: "Meyveler",
+          price: 18.0,
+          unit: "kg",
+          stock: 75,
+          origin: "Ekvador",
+          isOrganic: true,
+          description: "Tatlı ve besleyici muz",
+          nutritionalValue: "Potasyum, B6 vitamini",
+          expiryDays: 5,
+          photo: "/muz.jpg",
+          __v: 0,
+        },
+        {
+          _id: "3",
+          name: "Portakal",
+          category: "Meyveler",
+          price: 14.0,
+          unit: "kg",
+          stock: 80,
+          origin: "Mersin",
+          isOrganic: true,
+          description: "C vitamini deposu portakal",
+          nutritionalValue: "C vitamini, folat",
+          expiryDays: 14,
+          photo: "/portakal.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "4",
+          name: "Armut",
+          category: "Meyveler",
+          price: 16.0,
+          unit: "kg",
+          stock: 60,
+          origin: "Bursa",
+          isOrganic: true,
+          description: "Tatlı ve sulu armut",
+          nutritionalValue: "Lif, C vitamini",
+          expiryDays: 21,
+          photo: "/armut.jpg",
+          __v: 0,
+        },
+        {
+          _id: "5",
+          name: "Çilek",
+          category: "Meyveler",
+          price: 25.0,
+          unit: "kg",
+          stock: 40,
+          origin: "Mersin",
+          isOrganic: true,
+          description: "Taze ve aromalı çilek",
+          nutritionalValue: "C vitamini, antioksidan",
+          expiryDays: 3,
+          photo: "/cilek.png",
+          __v: 0,
+        },
+        {
+          _id: "6",
+          name: "Kiraz",
+          category: "Meyveler",
+          price: 35.0,
+          unit: "kg",
+          stock: 30,
+          origin: "Amasya",
+          isOrganic: true,
+          description: "Tatlı ve kırmızı kiraz",
+          nutritionalValue: "Antioksidan, C vitamini",
+          expiryDays: 5,
+          photo: "/kiraz.jpg",
+          __v: 0,
+        },
+        {
+          _id: "7",
+          name: "Üzüm",
+          category: "Meyveler",
+          price: 20.0,
+          unit: "kg",
+          stock: 50,
+          origin: "Manisa",
+          isOrganic: true,
+          description: "Tatlı ve sulu üzüm",
+          nutritionalValue: "Antioksidan, potasyum",
+          expiryDays: 7,
+          photo: "/uzum.jpg",
+          __v: 0,
+        },
+        {
+          _id: "8",
+          name: "Karpuz",
+          category: "Meyveler",
+          price: 8.0,
+          unit: "kg",
+          stock: 25,
+          origin: "Diyarbakır",
+          isOrganic: false,
+          description: "Sulu ve serinletici karpuz",
+          nutritionalValue: "Su, C vitamini",
+          expiryDays: 10,
+          photo: "/karbuz.jpg",
+          __v: 0,
+        },
+        {
+          _id: "9",
+          name: "Domates",
+          category: "Sebzeler",
+          price: 12.0,
+          unit: "kg",
+          stock: 50,
+          origin: "Antalya",
+          isOrganic: false,
+          description: "Sulu ve aromalı domates",
+          nutritionalValue: "Lycopene, C vitamini",
+          expiryDays: 7,
+          photo: "/domates.webp",
+          __v: 0,
+        },
+        {
+          _id: "10",
+          name: "Havuç",
+          category: "Sebzeler",
+          price: 6.5,
+          unit: "kg",
+          stock: 90,
+          origin: "Konya",
+          isOrganic: false,
+          description: "Beta karoten zengini havuç",
+          nutritionalValue: "Beta karoten, A vitamini",
+          expiryDays: 21,
+          photo: "/havuc.jpg",
+          __v: 0,
+        },
+        {
+          _id: "11",
+          name: "Patates",
+          category: "Sebzeler",
+          price: 4.0,
+          unit: "kg",
+          stock: 120,
+          origin: "Niğde",
+          isOrganic: false,
+          description: "Taze ve besleyici patates",
+          nutritionalValue: "Karbonhidrat, potasyum",
+          expiryDays: 30,
+          photo: "/patates.jpg",
+          __v: 0,
+        },
+        {
+          _id: "12",
+          name: "Soğan",
+          category: "Sebzeler",
+          price: 5.0,
+          unit: "kg",
+          stock: 80,
+          origin: "Çorum",
+          isOrganic: false,
+          description: "Keskin aromalı soğan",
+          nutritionalValue: "C vitamini, antioksidan",
+          expiryDays: 60,
+          photo: "/sogan.jpg",
+          __v: 0,
+        },
+        {
+          _id: "13",
+          name: "Patlıcan",
+          category: "Sebzeler",
+          price: 8.0,
+          unit: "kg",
+          stock: 40,
+          origin: "Antalya",
+          isOrganic: false,
+          description: "Mor ve lezzetli patlıcan",
+          nutritionalValue: "Lif, antioksidan",
+          expiryDays: 7,
+          photo: "/patlican.jpg",
+          __v: 0,
+        },
+        {
+          _id: "14",
+          name: "Kabak",
+          category: "Sebzeler",
+          price: 6.0,
+          unit: "kg",
+          stock: 35,
+          origin: "Antalya",
+          isOrganic: false,
+          description: "Taze ve hafif kabak",
+          nutritionalValue: "Su, C vitamini",
+          expiryDays: 10,
+          photo: "/kabak.jpg",
+          __v: 0,
+        },
+        {
+          _id: "15",
+          name: "Biber",
+          category: "Sebzeler",
+          price: 15.0,
+          unit: "kg",
+          stock: 45,
+          origin: "Antalya",
+          isOrganic: false,
+          description: "Acı ve tatlı biber",
+          nutritionalValue: "C vitamini, kapsaisin",
+          expiryDays: 7,
+          photo: "/biber.jpg",
+          __v: 0,
+        },
+        {
+          _id: "16",
+          name: "Ispanak",
+          category: "Sebzeler",
+          price: 8.0,
+          unit: "kg",
+          stock: 30,
+          origin: "Mersin",
+          isOrganic: true,
+          description: "Demir zengini ıspanak",
+          nutritionalValue: "Demir, folat, K vitamini",
+          expiryDays: 5,
+          photo: "/ispanak.webp",
+          __v: 0,
+        },
+        {
+          _id: "17",
+          name: "Ceviz",
+          category: "Kuruyemişler",
+          price: 120.0,
+          unit: "kg",
+          stock: 25,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Omega-3 zengini ceviz",
+          nutritionalValue: "Omega-3, protein",
+          expiryDays: 365,
+          photo: "/ceviz.webp",
+          __v: 0,
+        },
+        {
+          _id: "18",
+          name: "Badem",
+          category: "Kuruyemişler",
+          price: 100.0,
+          unit: "kg",
+          stock: 30,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Protein zengini badem",
+          nutritionalValue: "Protein, E vitamini",
+          expiryDays: 365,
+          photo: "/badem.jpg",
+          __v: 0,
+        },
+        {
+          _id: "19",
+          name: "Fındık",
+          category: "Kuruyemişler",
+          price: 80.0,
+          unit: "kg",
+          stock: 40,
+          origin: "Giresun",
+          isOrganic: true,
+          description: "Türk fındığı",
+          nutritionalValue: "Protein, E vitamini",
+          expiryDays: 365,
+          photo: "/findik.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "20",
+          name: "Fıstık",
+          category: "Kuruyemişler",
+          price: 90.0,
+          unit: "kg",
+          stock: 35,
+          origin: "Gaziantep",
+          isOrganic: true,
+          description: "Gaziantep fıstığı",
+          nutritionalValue: "Protein, sağlıklı yağlar",
+          expiryDays: 365,
+          photo: "/fistik.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "21",
+          name: "Kaju",
+          category: "Kuruyemişler",
+          price: 150.0,
+          unit: "kg",
+          stock: 20,
+          origin: "Hindistan",
+          isOrganic: true,
+          description: "Kremalı kaju",
+          nutritionalValue: "Protein, magnezyum",
+          expiryDays: 365,
+          photo: "/kaju.jpg",
+          __v: 0,
+        },
+        {
+          _id: "22",
+          name: "Antep Fıstığı",
+          category: "Kuruyemişler",
+          price: 200.0,
+          unit: "kg",
+          stock: 15,
+          origin: "Gaziantep",
+          isOrganic: true,
+          description: "Premium Antep fıstığı",
+          nutritionalValue: "Protein, sağlıklı yağlar",
+          expiryDays: 365,
+          photo: "/antepfitigi.webp",
+          __v: 0,
+        },
+        {
+          _id: "23",
+          name: "Kestane",
+          category: "Kuruyemişler",
+          price: 25.0,
+          unit: "kg",
+          stock: 50,
+          origin: "Bursa",
+          isOrganic: true,
+          description: "Taze kestane",
+          nutritionalValue: "Karbonhidrat, C vitamini",
+          expiryDays: 30,
+          photo: "/kestane.avif",
+          __v: 0,
+        },
+        {
+          _id: "24",
+          name: "Mercimek",
+          category: "Bakliyatlar",
+          price: 18.0,
+          unit: "kg",
+          stock: 60,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Protein zengini mercimek",
+          nutritionalValue: "Protein, lif, demir",
+          expiryDays: 730,
+          photo: "/Mercimek.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "25",
+          name: "Nohut",
+          category: "Bakliyatlar",
+          price: 20.0,
+          unit: "kg",
+          stock: 55,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Besleyici nohut",
+          nutritionalValue: "Protein, lif, folat",
+          expiryDays: 730,
+          photo: "/Nohut.webp",
+          __v: 0,
+        },
+        {
+          _id: "26",
+          name: "Bulgur",
+          category: "Bakliyatlar",
+          price: 12.0,
+          unit: "kg",
+          stock: 70,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Geleneksel bulgur",
+          nutritionalValue: "Karbonhidrat, lif",
+          expiryDays: 365,
+          photo: "/Bulgur.jpg",
+          __v: 0,
+        },
+        {
+          _id: "27",
+          name: "Pirinç",
+          category: "Bakliyatlar",
+          price: 15.0,
+          unit: "kg",
+          stock: 80,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Temizlenmiş pirinç",
+          nutritionalValue: "Karbonhidrat, B vitamini",
+          expiryDays: 365,
+          photo: "/pirinc.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "28",
+          name: "Peynir",
+          category: "Süt Ürünleri",
+          price: 45.0,
+          unit: "kg",
+          stock: 25,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Taze beyaz peynir",
+          nutritionalValue: "Protein, kalsiyum",
+          expiryDays: 7,
+          photo: "/peynir.jpg",
+          __v: 0,
+        },
+        {
+          _id: "29",
+          name: "Yoğurt",
+          category: "Süt Ürünleri",
+          price: 8.0,
+          unit: "kg",
+          stock: 40,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Ev yapımı yoğurt",
+          nutritionalValue: "Protein, probiyotik",
+          expiryDays: 5,
+          photo: "/yoğurt.jpg",
+          __v: 0,
+        },
+        {
+          _id: "30",
+          name: "Tereyağı",
+          category: "Süt Ürünleri",
+          price: 60.0,
+          unit: "kg",
+          stock: 20,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Doğal tereyağı",
+          nutritionalValue: "A vitamini, D vitamini",
+          expiryDays: 30,
+          photo: "/Tereyağı.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "31",
+          name: "Çay",
+          category: "İçecekler",
+          price: 25.0,
+          unit: "kg",
+          stock: 50,
+          origin: "Rize",
+          isOrganic: true,
+          description: "Rize çayı",
+          nutritionalValue: "Antioksidan, kafein",
+          expiryDays: 730,
+          photo: "/Çay.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "32",
+          name: "Limonata",
+          category: "İçecekler",
+          price: 12.0,
+          unit: "adet",
+          stock: 30,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Doğal limonata",
+          nutritionalValue: "C vitamini",
+          expiryDays: 7,
+          photo: "/Limonata.webp",
+          __v: 0,
+        },
+        {
+          _id: "33",
+          name: "Maden Suyu",
+          category: "İçecekler",
+          price: 3.0,
+          unit: "adet",
+          stock: 100,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Doğal maden suyu",
+          nutritionalValue: "Mineraller",
+          expiryDays: 365,
+          photo: "/MadenSuyu.jpg",
+          __v: 0,
+        },
+        {
+          _id: "34",
+          name: "Bal",
+          category: "Doğal Ürünler",
+          price: 80.0,
+          unit: "kg",
+          stock: 20,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Doğal çiçek balı",
+          nutritionalValue: "Antioksidan, enzimler",
+          expiryDays: 1825,
+          photo: "/bal.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "35",
+          name: "Zeytinyağı",
+          category: "Doğal Ürünler",
+          price: 45.0,
+          unit: "lt",
+          stock: 30,
+          origin: "Ayvalık",
+          isOrganic: true,
+          description: "Sızma zeytinyağı",
+          nutritionalValue: "E vitamini, sağlıklı yağlar",
+          expiryDays: 730,
+          photo: "/zeytinyagi.webp",
+          __v: 0,
+        },
+        {
+          _id: "36",
+          name: "Maydanoz",
+          category: "Yeşillikler",
+          price: 8.0,
+          unit: "demet",
+          stock: 25,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Taze maydanoz",
+          nutritionalValue: "C vitamini, K vitamini",
+          expiryDays: 5,
+          photo: "/maydanoz.jpg",
+          __v: 0,
+        },
+        {
+          _id: "37",
+          name: "Dereotu",
+          category: "Yeşillikler",
+          price: 6.0,
+          unit: "demet",
+          stock: 20,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Aromalı dereotu",
+          nutritionalValue: "C vitamini, antioksidan",
+          expiryDays: 5,
+          photo: "/dereotu.jpg",
+          __v: 0,
+        },
+        {
+          _id: "38",
+          name: "Roka",
+          category: "Yeşillikler",
+          price: 10.0,
+          unit: "demet",
+          stock: 15,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Acı ve lezzetli roka",
+          nutritionalValue: "C vitamini, K vitamini",
+          expiryDays: 3,
+          photo: "/roka.jpg",
+          __v: 0,
+        },
+        {
+          _id: "39",
+          name: "Tere",
+          category: "Yeşillikler",
+          price: 7.0,
+          unit: "demet",
+          stock: 18,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Taze tere",
+          nutritionalValue: "C vitamini, demir",
+          expiryDays: 4,
+          photo: "/tere.webp",
+          __v: 0,
+        },
+        {
+          _id: "40",
+          name: "Pırasa",
+          category: "Yeşillikler",
+          price: 5.0,
+          unit: "kg",
+          stock: 30,
+          origin: "Türkiye",
+          isOrganic: false,
+          description: "Taze pırasa",
+          nutritionalValue: "K vitamini, folat",
+          expiryDays: 10,
+          photo: "/pirasa.webp",
+          __v: 0,
+        },
+        {
+          _id: "41",
+          name: "Nane",
+          category: "Yeşillikler",
+          price: 8.0,
+          unit: "demet",
+          stock: 22,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Aromalı nane",
+          nutritionalValue: "C vitamini, mentol",
+          expiryDays: 5,
+          photo: "/nane.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "42",
+          name: "Fesleğen",
+          category: "Yeşillikler",
+          price: 12.0,
+          unit: "demet",
+          stock: 15,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Aromalı fesleğen",
+          nutritionalValue: "C vitamini, antioksidan",
+          expiryDays: 7,
+          photo: "/feslegen.jpeg",
+          __v: 0,
+        },
+        {
+          _id: "43",
+          name: "Kekik",
+          category: "Yeşillikler",
+          price: 15.0,
+          unit: "kg",
+          stock: 20,
+          origin: "Türkiye",
+          isOrganic: true,
+          description: "Kurutulmuş kekik",
+          nutritionalValue: "Antioksidan, aromatik yağlar",
+          expiryDays: 365,
+          photo: "/Kekik.webp",
+          __v: 0,
+        },
+      ];
+
+      const grocery = mockGroceries.find((item) => item._id === groceryId);
+      if (!grocery) {
+        return NextResponse.json(
+          { message: "Ürün bulunamadı" },
+          { status: 404 }
+        );
+      }
+
+      // Yeni ürünü sepete ekle
+      const newItem = {
+        grocery: grocery,
+        quantity: quantity,
+        price: grocery.price * quantity,
+      };
+
+      cart.items.push(newItem);
+    } else {
+      // Ürün sepette varsa miktarını güncelle
+      cart.items[itemIndex].quantity = quantity;
+      cart.items[itemIndex].price =
+        cart.items[itemIndex].grocery.price * quantity;
+    }
+
+    // Toplam tutarı güncelle
+    cart.totalAmount = cart.items.reduce(
+      (total: number, item: any) => total + item.price,
+      0
+    );
+    cart.updatedAt = new Date().toISOString();
+
+    mockCarts[userId] = cart;
+
+    return NextResponse.json({
+      message: "Ürün miktarı güncellendi",
+      cart: cart,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Ürün güncellenemedi" },
+      { status: 500 }
+    );
+  }
+}
+
+// Sepetten ürün kaldır
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+    const groceryId = searchParams.get("groceryId");
+
+    if (!userId || !groceryId) {
+      return NextResponse.json(
+        { message: "Kullanıcı ID ve Ürün ID gerekli" },
+        { status: 400 }
+      );
+    }
+
+    // Kullanıcının sepetini bul
+    const cart = mockCarts[userId];
+
+    if (!cart) {
+      return NextResponse.json(
+        { message: "Sepet bulunamadı" },
+        { status: 404 }
+      );
+    }
+
+    // Sepetten ürünü kaldır
+    cart.items = cart.items.filter(
+      (item: any) => item.grocery._id !== groceryId
+    );
+
+    // Toplam tutarı güncelle
+    cart.totalAmount = cart.items.reduce(
+      (total: number, item: any) => total + item.price,
+      0
+    );
+    cart.updatedAt = new Date().toISOString();
+
+    mockCarts[userId] = cart;
+
+    return NextResponse.json({
+      message: "Ürün sepetten kaldırıldı",
+      cart: cart,
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json(
+      { message: "Ürün kaldırılamadı" },
+      { status: 500 }
+    );
+  }
+}
