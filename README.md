@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🥦 🍎 🥕 🥜 Veggie-Fruit-Hub-Clone
 
-## Getting Started
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js" alt="Next.js Badge"/>
+  <img src="https://img.shields.io/badge/React-19-blue?logo=react" alt="React Badge"/>
+  <img src="https://img.shields.io/badge/TypeScript-5-blue?logo=typescript" alt="TypeScript Badge"/>
+  <img src="https://img.shields.io/badge/Mongoose-8-brightgreen?logo=mongodb" alt="MongoDB Badge"/>
+  <img src="https://img.shields.io/badge/Stripe-18-purple?logo=stripe" alt="Stripe Badge"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-4-38B2AC?logo=tailwindcss" alt="TailwindCSS Badge"/>
+</p>
 
-First, run the development server:
+A modern **online grocery store** built with **Next.js + TypeScript + TailwindCSS (frontend)** and **Mongoose + Stripe (backend)**.  
+Users can browse fruits & vegetables, add products to cart, checkout via **Stripe payments**, and **admins** can manage products via a simple **Admin Panel**.  
+Fully responsive for desktop & mobile.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎥 Live Demo  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+https://github.com/user-attachments/assets/7cc3925a-5310-4d1b-ae1b-cd0bb965e44a
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠 Frontend Technologies  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Technology | Usage |
+|------------|-------|
+| ⚛️ **React 19** | UI development |
+| 🔷 **TypeScript 5** | Type safety |
+| 🎨 **TailwindCSS 4** | Styling |
+| 🔄 **Next.js 15** | Routing & SSR |
+| 🌐 **Axios** | HTTP requests |
+| 🔔 **React Toastify** | Notifications |
+| ⚡ **next-themes** | Dark/Light mode |
+| 📝 **Formik & Yup** | Form handling & validation |
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔧 Backend Technologies  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Category | Stack |
+|----------|-------|
+| **Runtime & Framework** | Node.js + Next.js API routes |
+| **Database** | MongoDB with Mongoose 8 |
+| **Payments** | Stripe API integration |
+| **Validation & Security** | Form validation, input sanitization, secure payment handling |
+
+---
+
+## ✨ Features  
+
+### ✅ User Side  
+- 🛒 Browse fruits & vegetables  
+- 🧺 Add/remove products in cart  
+- 💳 Checkout via Stripe payments  
+- 📱 Fully responsive UI  
+- 🔔 Toast notifications  
+
+### ✅ Backend  
+- ⚡ RESTful API endpoints  
+- 💾 MongoDB database integration  
+- 🔐 Secure Stripe payment handling  
+- 🛡 Input validation & sanitization  
+
+---
+
+
