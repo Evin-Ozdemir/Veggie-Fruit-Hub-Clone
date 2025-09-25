@@ -1,4 +1,4 @@
-# 🥦 🍎 🥕 🥜 Veggie-Fruit-Hub-Clone
+# 🥦 🍎 🥕 🥜 Veggie Fruit Hub Clone
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-15-black?logo=next.js" alt="Next.js Badge"/>
